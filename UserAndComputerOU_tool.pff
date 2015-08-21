@@ -1,0 +1,203 @@
+﻿
+  <FileID>e003010b-d681-442d-b757-1cd31a20ec09</FileID>
+  <LastExport>130469012875029945</LastExport>
+  <FileVersion>1.2</FileVersion>
+  <Object type="System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" name="formRecallOUTool" children="Controls">
+    <Property name="ClientSize">279, 359</Property>
+    <Property name="Name">formRecallOUTool</Property>
+    <Property name="Text">Recall OU Tool</Property>
+    <Event name="Load">formRecallOUTool_Load</Event>
+    <Event name="Shown">formRecallOUTool_Shown</Event>
+    <Object type="System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" name="DomainConnectionLabel" children="Controls">
+      <Property name="ForeColor">Desktop</Property>
+      <Property name="Location">117, 320</Property>
+      <Property name="Name">DomainConnectionLabel</Property>
+      <Property name="Size">130, 17</Property>
+      <Property name="TabIndex">5</Property>
+      <Property name="Text">Connecting to domain...</Property>
+    </Object>
+    <Object type="System.Windows.Forms.StatusStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" name="statusstrip1" children="Controls">
+      <Property name="Items">
+        <Item type="System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+          <Reference name="toolstripstatuslabel1" />
+        </Item>
+      </Property>
+      <Property name="Location">0, 337</Property>
+      <Property name="Name">statusstrip1</Property>
+      <Property name="Size">279, 22</Property>
+      <Property name="TabIndex">4</Property>
+      <Property name="Text">hhhhhhhhhhstatusstrip1</Property>
+    </Object>
+    <Object type="System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" name="buttonSearch" children="Controls">
+      <Property name="Location">172, 286</Property>
+      <Property name="Name">buttonSearch</Property>
+      <Property name="Size">75, 23</Property>
+      <Property name="TabIndex">3</Property>
+      <Property name="Text">Search</Property>
+      <Property name="UseVisualStyleBackColor">True</Property>
+      <Event name="Click">buttonSearch_Click</Event>
+    </Object>
+    <Object type="System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" name="buttonFixFormat" children="Controls">
+      <Property name="Location">13, 286</Property>
+      <Property name="Name">buttonFixFormat</Property>
+      <Property name="Size">75, 23</Property>
+      <Property name="TabIndex">2</Property>
+      <Property name="Text">Fix Format</Property>
+      <Property name="UseVisualStyleBackColor">True</Property>
+      <Event name="Click">buttonFixFormat_Click</Event>
+    </Object>
+    <Object type="System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" name="richtextbox1" children="Controls">
+      <Property name="Location">13, 50</Property>
+      <Property name="Name">richtextbox1</Property>
+      <Property name="Size">234, 230</Property>
+      <Property name="TabIndex">1</Property>
+      <Property name="Text">
+      </Property>
+      <Event name="TextChanged">richtextbox1_TextChanged</Event>
+    </Object>
+    <Object type="System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" name="labelUseThisToolToQuickly" children="Controls">
+      <Property name="Location">13, 13</Property>
+      <Property name="Name">labelUseThisToolToQuickly</Property>
+      <Property name="Size">274, 34</Property>
+      <Property name="TabIndex">0</Property>
+      <Property name="Text">Use this tool to quickly verify the location of users or computers in the Recall Source Domain</Property>
+      <Event name="Click">labelUseThisToolToQuickly_Click</Event>
+    </Object>
+  </Object>
+  <Object type="System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" name="toolstripstatuslabel1">
+    <Property name="Name">toolstripstatuslabel1</Property>
+    <Property name="Size">92, 17</Property>
+    <Property name="Text">Count of names</Property>
+  </Object>
+  <Code><![CDATA[
+
+function OnApplicationLoad {
+	#Note: This function is not called in Projects
+	#Note: This function runs before the form is created
+	#Note: To get the script directory in the Packager use: Split-Path $hostinvocation.MyCommand.path
+	#Note: To get the console output in the Packager (Windows Mode) use: $ConsoleOutput (Type: System.Collections.ArrayList)
+	#Important: Form controls cannot be accessed in this function
+	#TODO: Add snapins and custom code to validate the application load
+	add-pssnapin Quest.ActiveRoles.ADManagement
+	$cred = (Get-credential  -Message "Enter your credentials for the Recall Domain" )
+	
+	return $true #return true for success or false for failure
+}
+
+
+function OnApplicationExit {
+	#Note: This function is not called in Projects
+	#Note: This function runs after the form is closed
+	#TODO: Add custom code to clean up and unload snapins when the application exits
+	
+	$script:ExitCode = 0 #Set the exit code for the Packager
+}
+
+$formRecallOUTool_Load={
+	#TODO: Initialize Form Controls here
+	
+}
+
+$labelUseThisToolToQuickly_Click={
+	#TODO: Place custom script here
+	
+}
+
+$buttonFixFormat_Click={
+	#TODO: Place custom script here
+		"When clicked, I should parse out the contents of the textbox"
+		$names = $richtextbox1.Text
+		
+		Write-Debug $names
+        if ($names -contains ',') {
+            Write-Debug "A comma was found, splitting on commas"
+            $names = $names.Split(',')
+            $names | % {Write-Debug $_}
+            Write-Debug ("Total Names Detected: " + $names.Count)
+            }
+        ELSE{
+            Write-Debug "No commas found, splitting on Host.Newline"
+            $names = $names.Split([environment]::NewLine)
+            $names | % {Write-Debug $_}
+            Write-Debug ("Total Names Detected: " + $names.Count)
+            }
+
+            $richtextbox1.Text = $names
+			$toolstripstatuslabel1.Text = ("Count of names: " + $names.Count)
+}
+
+$richtextbox1_TextChanged={
+	#TODO: Place custom script here
+	$names = $richtextbox1.Text
+	$toolstripstatuslabel1.Text = ("Count of names: " + $names.Count)
+}
+
+$buttonSearch_Click={
+	#TODO: Place custom script here
+	$names | Get-qadObject | select Name, DN | Out-GridView
+}
+
+$formRecallOUTool_Shown={
+	#TODO: Place custom script here
+	Connect-QADService -Service amatldc00.recallad.recall.com -Credential $cred | Out-Null
+	
+}
+]]></Code>
+  <Mode>0</Mode>
+  <Assemblies>
+    <Assembly>System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Assembly>
+    <Assembly>mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</Assembly>
+    <Assembly>System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</Assembly>
+    <Assembly>System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</Assembly>
+    <Assembly>System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</Assembly>
+    <Assembly>System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+    <Assembly>System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</Assembly>
+    <Assembly>System.DirectoryServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+    <Assembly>System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</Assembly>
+    <Assembly>System.ServiceProcess, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+    <Assembly>System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Assembly>
+  </Assemblies>
+  <Packager>
+    <General>
+      <PackageName>
+      </PackageName>
+      <PackageIcon>
+      </PackageIcon>
+      <ManifestCreation>1</ManifestCreation>
+      <CustomManifest>
+      </CustomManifest>
+      <Platform>-1</Platform>
+      <RunSTA>0</RunSTA>
+      <PowerShellVersion>2</PowerShellVersion>
+    </General>
+    <Security>
+      <Username>
+      </Username>
+      <Password>
+      </Password>
+      <SignPackage>False</SignPackage>
+      <Certificate>
+      </Certificate>
+      <CertificatePassword>
+      </CertificatePassword>
+      <RunAs>0</RunAs>
+    </Security>
+    <Version>
+      <FileVersion>1.0.0.0</FileVersion>
+      <ProductVersion>1.0.0.0</ProductVersion>
+      <ProductName>
+      </ProductName>
+      <Description>
+      </Description>
+      <Company>
+      </Company>
+      <Copyright>
+      </Copyright>
+      <InternalName>
+      </InternalName>
+      <OriginalFileName>
+      </OriginalFileName>
+      <Comment>
+      </Comment>
+    </Version>
+  </Packager>
